@@ -1,0 +1,12 @@
+.form {
+  height: 25%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.formInput {
+  border: solid black 2px;
+  width: 20%;
+  padding: 2em;
+}
