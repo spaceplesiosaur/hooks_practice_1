@@ -1,86 +1,58 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from '../Form/Form'
 import RenderArea from '../RenderArea/RenderArea'
 import { getData } from '../../apiCalls.js'
 import './App.css';
 
-export default class App extends Component {
-  constructor() {
-    super()
-    this.state = {
-      cards: []
-    }
-  }
-  //no API
+const App = () => {
+  const [error, setError] = useState('')
+  const [pictureSource, changePicture] = useState('')
+  const cardsState = useState([])
+  //useState is a function that takes in an initial value for the state and returns a two-element array: the first element is the state, the second element is a function that sets the state.
+  const cards = cardsState[0]
+  const setCards = cardsState[1]
+  //this is getting those two elements out of the array that useState returns and assigning them variables to make our life easier.
 
-  postNewCard = (newCard) => {
-    this.setState({cards: [...this.state.cards, newCard]})
+  //if we wanted to do this the destructured way, we'd do it like this:
+
+  // const [cards, setCards] = useState([])
+
+  const postNewCard = (newCard) => {
+    setCards([...cards, newCard])
   }
 
-  deleteCard = (id) => {
-    const shortCardList = this.state.cards.filter(card => {
-      return !card.id === id
+  const deleteCard = (id) => {
+    const shortCardList = cards.filter(card => {
+      return card.id !== id
     })
 
-    this.setState({cards: [...shortCardList]})
+    setCards(shortCardList)
   }
 
-  //with API
-  //
-  // componentDidMount() {
-  //   return getData("url", 'thing')
-  //   .then(data => data.map((cardInfo) => {
-  //     this.setState({cards: [...this.state.cards, cardInfo]})
-  //   }))
-  // }
-  //
-  // postNewCard = (newCard) => {
-  //   const options = {
-  //     method: 'POST',
-  //     body: JSON.stringify(
-  //       {id: 5, ...newCard}
-  //     ),
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   }
-  //
-  //   return fetch('url', options)
-  //           .then(res => {
-  //             if(!res.ok) {
-  //               throw Error('Something is not right, try again later')
-  //             }
-  //             return res.json()})
-  //             .then(data => ({cards: [...this.state.cards, data]}))
-  // }
-  //
-  // deleteCard = (id) => {
-  //     const options = {
-  //       method: 'DELETE',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       }
-  //     }
-  //
-  //     fetch(`url/${id}`, options)
-  //       .then(() => fetch('url'))
-  //       .then(response => response.json())
-  //       .then(data => this.setState({cards: [...this.state.cards, data] }))
-  //       .catch(error => this.setState({ error: error.message }));
-  //   }
+  const getScreamingFace = async () => {
+    const resolution = await getData('https://color-seasons.herokuapp.com/hosts/3/')
+    const fetchedPic = resolution.picture
 
-  render() {
-    return (
-      <main className="App">
-        <h1>My Anarcho Syndicalist Band</h1>
-        <Form
-        makeNewCard={this.postNewCard}/>
-        <RenderArea
-        cards={this.state.cards}
-        remove={this.deleteCard}
-        />
-      </main>
-    )
+    changePicture(fetchedPic)
   }
 
+  useEffect(() => {
+    getScreamingFace()
+  }, [])
+  //everything in the array is what it depends on to run.  Here it doesn't depend on something, but if it depended on something like a user id, you'd put that prop or piece of state in there and it would change when that changed
+
+  return (
+    <main className="App">
+      <h1>My GirlSquad</h1>
+      <img src={pictureSource} className="screamingPic"></img>
+      <Form
+      makeNewCard={postNewCard}/>
+      <RenderArea
+      cards={cards}
+      remove={deleteCard}
+      />
+    </main>
+  )
 }
+
+export default App

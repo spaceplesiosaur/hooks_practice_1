@@ -2,30 +2,25 @@ import React, { Component } from 'react'
 import NameCard from '../NameCard/NameCard'
 import './RenderArea.css'
 
-export default class RenderArea extends Component {
-  constructor() {
-    super()
-    this.state = {
+const RenderArea = ({cards, remove}) => {
 
-    }
-  }
-
-  generateCards = () => {
-    return this.props.cards.map((card) => {
+  const generateCards = () => {
+    return cards.map((card) => {
       return (<NameCard
-              id={Date.now()}
+              id={card.id}
               name={card.name}
               status={card.status}
               interests={card.interests}
-              remove={this.props.remove}
+              remove={remove}
             />)
     })
   }
-  render() {
-    return (
-      <section className="renderArea">
-        {this.generateCards()}
-      </section>
-    )
-  }
+
+  return (
+    <section className="renderArea">
+      {generateCards()}
+    </section>
+  )
 }
+
+export default RenderArea
